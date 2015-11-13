@@ -1,0 +1,28 @@
+﻿<div>
+
+    <div style="height:25px"></div>
+
+    <button type="button" class="btn btn-primary" ng-click="vm.newTab()">New Tab</button>
+
+    <div style="height:5px"></div>
+
+    <uib-tabset>
+        <uib-tab ng-repeat="tab in vm.tabs" active="tab.active" disable="tab.disabled">
+
+            <uib-tab-heading>
+                {{tab.title}} <a class="btn btn-default btn-xs" ng-click="vm.closeTab(tab)" ng-disabled="!tab.active"><i class="glyphicon glyphicon-remove"></i></a>
+            </uib-tab-heading>
+
+            <div>
+                <div class="btn-toolbar" role="toolbar" aria-label="Sql">
+
+                    <div class="btn-group" role="group" aria-label="Command">
+                        <button type="button" class="btn btn-default" ng-click="vm.executeCommand(tab, tab.editor)" tooltip="Run command (Ctr+Enter)">Run</button>
+                    </div>
+                </div>
+
+                <div ui-ace="tab.aceOptions" style="height:500px;" ng-model="tab.sql"></div>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+</div>
