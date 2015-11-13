@@ -22,6 +22,26 @@
                 </div>
 
                 <div ui-ace="tab.aceOptions" style="height:500px;" ng-model="tab.sql"></div>
+
+                <div>
+                    <table class="table table-bordered table-condensed table-striped table-responsive">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="col in vm.columns" ng-bind="col"></th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th colspan="100%">Results: {{vm.columns.length}}</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <tr ng-repeat="row in vm.rows">
+                                <td ng-repeat="col in vm.columns" ng-bind="row[col]"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </uib-tab>
     </uib-tabset>

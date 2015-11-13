@@ -200,6 +200,8 @@
         vm.editorInstance = null;
         vm.sql = '';
         vm.tabs = [];
+        vm.columns = [];
+        vm.rows = [];
         vm.newTab = newTab;
         vm.closeTab = closeTab;
         vm.executeCommand = executeCommand;
@@ -225,7 +227,27 @@
 
             var selectedText = getSelectedText(tab, editor);
 
-            $http.post('api/sql', { commandText: selectedText, connection: tab.connection});
+            vm.rows.splice(0, vm.rows.length);
+            vm.columns.splice(0, vm.columns.length);
+
+            $http.post('api/sql', { commandText: selectedText, connection: tab.connection }).success(function (data) {
+
+                if (!data || !data.length) {
+                    return;
+                }
+
+                for (var i = 0; i < data.length; i++) {
+
+                    var item = data[i];
+                    vm.rows.push(item);
+
+                    for (var prop in item) {
+                        if (item.hasOwnProperty(prop) && vm.columns.indexOf(prop) < 0) {
+                            vm.columns.push(prop);
+                        }
+                    }
+                }
+            });
         }
 
         function closeTab(tab) {

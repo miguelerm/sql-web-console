@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
+using SqlWebConsole.ApiSerialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace SqlWebConsole
 
             var jsonSettings = config.Formatters.JsonFormatter.SerializerSettings;
 
-            jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            jsonSettings.ContractResolver = new CustomPropertyNamesContractResolver();
             jsonSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
             jsonSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
             

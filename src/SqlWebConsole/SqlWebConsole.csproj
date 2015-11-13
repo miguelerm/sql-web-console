@@ -478,6 +478,7 @@
     <Compile Include="ApiModels\Credentials.cs" />
     <Compile Include="ApiModels\SessionModel.cs" />
     <Compile Include="ApiModels\UserProfile.cs" />
+    <Compile Include="ApiSerialization\CustomPropertyNamesContractResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthenticationService.cs" />
     <Compile Include="Sink.aspx.cs">
