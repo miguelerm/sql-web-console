@@ -194,7 +194,7 @@
         };
     }
 
-    function HomeController($uibModal) {
+    function HomeController($uibModal, $http) {
         var vm = this;
 
         vm.editorInstance = null;
@@ -224,7 +224,8 @@
         function executeCommand(tab, editor) {
 
             var selectedText = getSelectedText(tab, editor);
-            alert('Command: ' + selectedText);
+
+            $http.post('api/sql', { commandText: selectedText, connection: tab.connection});
         }
 
         function closeTab(tab) {
@@ -242,7 +243,7 @@
 
                 var tab = {
                     title: 'nuevo',
-                    connection: connecton,
+                    connection: connection,
                     aceOptions: {
                         mode: 'sql',
                         theme: 'monokai',
@@ -290,6 +291,7 @@
         }
 
         function ok() {
+            vm.connection.providerName = vm.connection.provider.invariantName;
             $uibModalInstance.close(vm.connection);
         }
     }
