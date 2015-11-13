@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -457,6 +458,7 @@
     <Content Include="Scripts\ui-ace.js" />
     <Content Include="Scripts\ui-ace.min.js" />
     <Content Include="Sink.aspx" />
+    <Content Include="views\connection-form.html" />
     <Content Include="views\home.html" />
     <Content Include="views\login-form.html" />
     <Content Include="Web.config" />
@@ -464,6 +466,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiControllers\AuthenticationController.cs" />
+    <Compile Include="ApiControllers\ProvidersController.cs" />
     <Compile Include="ApiFilters\WebApiAuthenticationFilterAttribute.cs" />
     <Compile Include="ApiModels\Credentials.cs" />
     <Compile Include="ApiModels\SessionModel.cs" />

@@ -11,16 +11,17 @@
             notAuthenticated: 'auth-not-authenticated',
             notAuthorized: 'auth-not-authorized'
         })
-        //.run(onAuthorize)
+        .run(onAuthorize)
         .run(onAuthenticateEvents)
         .config(configStates)
         .config(configHttpInterceptors)
+        .directive('formAutofillFix', FormAutofillFixDirective)
         .factory('authService', AuthServiceFactory)
         .factory('authInterceptor', AuthInterceptorFactory)
         .service('session', SessionService)
         .controller('LoginController', LoginController)
         .controller('HomeController', HomeController)
-        .directive('formAutofillFix', FormAutofillFixDirective);
+        .controller('NewConnectonController', NewConnectonController);
 
     var lastState = null;
     function onAuthorize($rootScope, AUTH_EVENTS, authService) {
@@ -35,7 +36,7 @@
         });
 
         $rootScope.setCurrentUser = function (user) {
-
+            $rootScope.profile = user;
         };
 
         
@@ -96,6 +97,15 @@
 
     function AuthInterceptorFactory($rootScope, $q, AUTH_EVENTS) {
         return {
+            request: function(config) {
+                config.headers = config.headers || {};
+
+                if ($rootScope.profile) {
+                    config.headers.Authorization = 'Custom ' + $rootScope.profile.id;
+                }
+
+                return config;
+            },
             responseError: function (response) { 
                 $rootScope.$broadcast({
                     401: AUTH_EVENTS.notAuthenticated,
@@ -184,7 +194,7 @@
         };
     }
 
-    function HomeController() {
+    function HomeController($uibModal) {
         var vm = this;
 
         vm.editorInstance = null;
@@ -223,33 +233,65 @@
         }
 
         function newTab() {
-            var tab = {
-                title: 'nuevo',
-                aceOptions: {
-                    mode: 'sql',
-                    theme: 'monokai',
-                    require: ['ace/ext/language_tools'],
-                    advanced: {
-                        enableBasicAutocompletion: true,
-                        enableSnippets: true,
-                        enableLiveAutocompletion: false
-                    },
-                    onLoad: function (editor) {
-                        tab.editor = editor;
-                        editor.commands.addCommand({
-                            name: "executeCommand",
-                            bindKey: { win: "Ctrl-Enter", mac: "Command-Enter" },
-                            exec: function (_editor) {
-                                executeCommand(tab, _editor);
-                            }
-                        });
-                    }
-                }
-            };
+            var mi = $uibModal.open({
+                templateUrl: 'views/connection-form.html',
+                controller: 'NewConnectonController as vm'
+            });
 
-            vm.tabs.push(tab);
+            mi.result.then(function (connection) {
+
+                var tab = {
+                    title: 'nuevo',
+                    connection: connecton,
+                    aceOptions: {
+                        mode: 'sql',
+                        theme: 'monokai',
+                        require: ['ace/ext/language_tools'],
+                        advanced: {
+                            enableBasicAutocompletion: true,
+                            enableSnippets: true,
+                            enableLiveAutocompletion: false
+                        },
+                        onLoad: function (editor) {
+                            tab.editor = editor;
+                            editor.commands.addCommand({
+                                name: "executeCommand",
+                                bindKey: { win: "Ctrl-Enter", mac: "Command-Enter" },
+                                exec: function (_editor) {
+                                    executeCommand(tab, _editor);
+                                }
+                            });
+                        }
+                    }
+                };
+
+                vm.tabs.push(tab);
+            })
+
+            
         }
 
+    }
+
+    function NewConnectonController($http, $uibModalInstance) {
+        
+        var vm = this;
+        vm.ok = ok;
+
+        vm.connection = { };
+        vm.providers = [];
+
+        init();
+
+        function init() {
+            $http.get('api/providers').success(function (facts) {
+                vm.providers = facts;
+            });
+        }
+
+        function ok() {
+            $uibModalInstance.close(vm.connection);
+        }
     }
     
 })();

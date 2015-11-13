@@ -10,7 +10,7 @@
         <uib-tab ng-repeat="tab in vm.tabs" active="tab.active" disable="tab.disabled">
 
             <uib-tab-heading>
-                {{tab.title}} <a class="btn btn-default btn-xs" ng-click="vm.closeTab(tab)" ng-disabled="!tab.active"><i class="glyphicon glyphicon-remove"></i></a>
+                {{tab.title}} <button type="button" class="btn btn-default btn-xs" ng-click="vm.closeTab(tab)" ng-disabled="!tab.active"><i class="glyphicon glyphicon-remove"></i></button>
             </uib-tab-heading>
 
             <div>
