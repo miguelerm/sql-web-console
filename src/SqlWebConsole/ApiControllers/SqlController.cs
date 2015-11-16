@@ -17,7 +17,7 @@ namespace SqlWebConsole.ApiControllers
 
             try
             {
-                IEnumerable<object> result = null;
+                var result = new CommandResultModel();
                 var provider = System.Data.Common.DbProviderFactories.GetFactory(command.Connection.ProviderName);
                 var csb = provider.CreateConnectionStringBuilder();
                 csb.ConnectionString = command.Connection.ConnectionString;
@@ -38,7 +38,37 @@ namespace SqlWebConsole.ApiControllers
 
                     await connection.OpenAsync();
 
-                    result = (await connection.QueryAsync(command.CommandText)).Take(500).ToArray();
+                    var dbCommand = connection.CreateCommand();
+                    dbCommand.CommandText = command.CommandText;
+
+
+                    using (var reader = await dbCommand.ExecuteReaderAsync())
+                    {
+
+                        result.RecordsAffected = reader.RecordsAffected;
+
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            var fieldName = reader.GetName(i);
+                            var fieldType = reader.GetFieldType(i).FullName;
+                            var fieldDataType = reader.GetDataTypeName(i);
+                            result.Columns.Add(fieldName, new ColumnModel { Name = fieldName, Type = fieldType, DataType = fieldDataType });
+                        }
+
+                        while (await reader.ReadAsync())
+                        {
+                            var item = new Dictionary<string, object>();
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                var fieldName = reader.GetName(i);
+                                var fieldValue = reader.GetValue(i);
+                                item.Add(fieldName, fieldValue);
+                            }
+                            result.Items.Add(item);
+                        }
+                    }
+
+                    //result = (await connection.QueryAsync(command.CommandText)).Take(500).ToArray();
                     
                 }
 

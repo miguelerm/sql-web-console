@@ -473,7 +473,9 @@
     <Compile Include="ApiControllers\ProvidersController.cs" />
     <Compile Include="ApiControllers\SqlController.cs" />
     <Compile Include="ApiFilters\WebApiAuthenticationFilterAttribute.cs" />
+    <Compile Include="ApiModels\ColumnModel.cs" />
     <Compile Include="ApiModels\CommandModel.cs" />
+    <Compile Include="ApiModels\CommandResultModel.cs" />
     <Compile Include="ApiModels\ConnectionModel.cs" />
     <Compile Include="ApiModels\Credentials.cs" />
     <Compile Include="ApiModels\SessionModel.cs" />

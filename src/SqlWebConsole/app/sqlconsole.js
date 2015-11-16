@@ -205,6 +205,8 @@
         vm.newTab = newTab;
         vm.closeTab = closeTab;
         vm.executeCommand = executeCommand;
+        vm.recordsAffected = null;
+        vm.errorMessage = null
 
         init();
 
@@ -229,25 +231,37 @@
 
             vm.rows.splice(0, vm.rows.length);
             vm.columns.splice(0, vm.columns.length);
+            vm.recordsAffected = null;
+            vm.errorMessage = null;
 
-            $http.post('api/sql', { commandText: selectedText, connection: tab.connection }).success(function (data) {
+            $http.post('api/sql', { commandText: selectedText, connection: tab.connection })
+                .success(function (data) {
 
-                if (!data || !data.length) {
-                    return;
-                }
-
-                for (var i = 0; i < data.length; i++) {
-
-                    var item = data[i];
-                    vm.rows.push(item);
-
-                    for (var prop in item) {
-                        if (item.hasOwnProperty(prop) && vm.columns.indexOf(prop) < 0) {
-                            vm.columns.push(prop);
-                        }
+                    if (!data) {
+                        return;
                     }
-                }
-            });
+
+                    for (var col in data.columns) {
+                        data.columns[col].fieldName = col;
+                        vm.columns.push(data.columns[col]);
+                    }
+
+                    for (var i = 0; i < data.items.length; i++) {
+
+                        var item = data.items[i];
+                        vm.rows.push(item);
+
+                    }
+
+                    if (data.recordsAffected >= 0) {
+                        vm.recordsAffected = data.recordsAffected;
+                    }
+
+
+                })
+                .error(function (data) {
+                    vm.errorMessage = data.message;
+                });
         }
 
         function closeTab(tab) {

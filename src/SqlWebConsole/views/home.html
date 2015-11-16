@@ -10,7 +10,7 @@
         <uib-tab ng-repeat="tab in vm.tabs" active="tab.active" disable="tab.disabled">
 
             <uib-tab-heading>
-                {{tab.title}} <button type="button" class="btn btn-default btn-xs" ng-click="vm.closeTab(tab)" ng-disabled="!tab.active"><i class="glyphicon glyphicon-remove"></i></button>
+                <span class="conn-tab-title">{{tab.title}}</span> <button type="button" class="close" aria-label="Close" ng-click="vm.closeTab(tab)" ng-disabled="!tab.active"><span aria-hidden="true">&times;</span></button>
             </uib-tab-heading>
 
             <div>
@@ -23,24 +23,31 @@
 
                 <div ui-ace="tab.aceOptions" style="height:500px;" ng-model="tab.sql"></div>
 
-                <div>
+                <div ng-if="vm.errorMessage == null">
                     <table class="table table-bordered table-condensed table-striped table-responsive">
                         <thead>
                             <tr>
-                                <th ng-repeat="col in vm.columns" ng-bind="col"></th>
+                                <th ng-repeat="col in vm.columns" ng-bind="col.name"></th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <th colspan="100%">Results: {{vm.columns.length}}</th>
+                                <th colspan="100%">
+                                    <span ng-if="vm.recordsAffected == null">Results: {{vm.rows.length}}</span>
+                                    <span ng-if="vm.recordsAffected != null">Records Affected {{vm.recordsAffected}}</span>
+                                </th>
                             </tr>
                         </tfoot>
                         <tbody>
                             <tr ng-repeat="row in vm.rows">
-                                <td ng-repeat="col in vm.columns" ng-bind="row[col]"></td>
+                                <td ng-repeat="col in vm.columns" ng-bind="row[col.fieldName]"></td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div ng-if="vm.errorMessage != null" class="alert alert-danger" role="alert">
+                    <strong>Error:</strong> <span ng-bind="vm.errorMessage"></span>
                 </div>
             </div>
         </uib-tab>
